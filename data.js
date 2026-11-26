@@ -39,3 +39,32 @@ const dietNames=[['全素','全素／五辛素','蛋素','葷食','全素／葷�
 const riskCodes=[[],[],[],['egg'],['egg'],['egg','soy','wheat'],['soy','wheat'],['soy','wheat'],['unknown'],['soy','wheat'],['soy','wheat'],['wheat','soy'],['soy']];
 const riskNames=[['蛋','大豆','麩質','待確認','未確認常見過敏原'],['Egg','Soy','Gluten','Check ingredients','Common allergens unverified'],['卵','大豆','グルテン','原材料要確認','一般的なアレルゲン未確認'],['달걀','대두','글루텐','원재료 확인 필요','일반 알레르기 성분 미확인']];
 const tentativeSuffix=['（暫定）',' (unverified)','（未確認）',' (미확인)'];
+// V7：更新三幕文案，四語同步。
+scenes[0][0]='在早期的台灣，\n一碗粥，是再平凡不過的日常。';
+scenes[0][4]='在高雄，夜深了，\n總有幾盞燈還亮著。\n為每個想吃碗熱粥的人，\n留一個歇腳的地方。';
+scenes[0][7]='今晚，在新的一年到來之前，\n換我們為您準備一碗粥。\n願這一口幸福的滋味，\n也成為您日後想起高雄的理由。';
+scenes[1][0]='In Taiwan in earlier times,\na bowl of congee was an everyday meal.';
+scenes[1][4]='Late at night in Kaohsiung,\na few lights are still shining.\nFor anyone craving warm congee,\nthere is a place to rest.';
+scenes[1][7]='Tonight, before the new year arrives,\nlet us prepare a bowl for you.\nMay this taste of happiness\nbring Kaohsiung to mind in years to come.';
+scenes[2][0]='かつての台湾では、\n一杯のお粥はごく当たり前の日常でした。';
+scenes[2][4]='高雄の夜が更けても、\nまだ灯る明かりがあります。\n温かいお粥を食べたい人なら誰でも、\nひと休みできる場所があります。';
+scenes[2][7]='今夜、新しい年を迎える前に、\n私たちがあなたのためにお粥をご用意します。\nこの幸せの味が、\nいつか高雄を思い出すきっかけになりますように。';
+scenes[3][0]='옛 대만에서는\n죽 한 그릇이 지극히 평범한 일상이었습니다.';
+scenes[3][4]='가오슝의 밤이 깊어도\n여전히 몇몇 불빛은 켜져 있습니다.\n따뜻한 죽이 생각나는 누구에게나\n잠시 쉬어 갈 자리가 있습니다.';
+scenes[3][7]='오늘 밤, 새해가 오기 전에\n저희가 당신을 위해 죽 한 그릇을 준비합니다.\n이 행복한 맛이\n훗날 가오슝을 떠올리는 이유가 되기를 바랍니다.';
+const memories=[
+['地瓜的清甜，讓曾經用來節省米糧的一碗粥，成為今日令人想念的家常滋味。','The sweetness of sweet potato turns a once-frugal meal into a cherished taste of home.','米を節約するための一杯が、さつまいもの甘さとともに懐かしい家庭の味になりました。','쌀을 아끼던 한 그릇은 고구마의 단맛과 함께 그리운 집밥이 되었습니다.'],
+['一盤清炒高麗菜，是家常餐桌上不張揚的陪伴，也是熱粥旁清甜的一口。','A plate of cabbage is a quiet companion to everyday meals and warm congee.','キャベツの炒め物は、家庭の食卓や温かいお粥に寄り添う優しい味です。','양배추볶음은 일상의 식탁과 따뜻한 죽에 곁들이는 소박한 맛입니다.'],
+['小白菜的清爽，讓人想起市場買菜後，廚房裡簡單而熟悉的晚餐。','Tender greens recall simple dinners made with vegetables fresh from the market.','青菜のさっぱりした味は、市場で買った野菜で作る家庭の夕食を思わせます。','청경채의 산뜻한 맛은 시장에서 사 온 채소로 차린 저녁을 떠올리게 합니다.'],
+['一把菜脯、一顆雞蛋，把保存食材的生活智慧化為熟悉的鹹香。','Preserved radish and eggs turn the wisdom of food preservation into a familiar savory flavor.','菜脯と卵には、食材を保存する昔の知恵と懐かしい味が詰まっています。','절인 무와 달걀에는 식재료를 보존하던 지혜와 정겨운 맛이 담겨 있습니다.'],
+['煎蛋的香氣，是許多人記憶中最簡單的一餐；配上一碗粥，就有了家的味道。','The aroma of a fried egg recalls the simplest meals, made comforting with a bowl of congee.','目玉焼きの香りと一杯のお粥は、素朴な家庭の食事を思い出させます。','달걀프라이의 향과 죽 한 그릇은 소박한 집밥을 떠올리게 합니다.'],
+['慢慢滷入的鹹香，讓一顆平凡的雞蛋成為便當與清粥小菜裡熟悉的身影。','Slowly braised eggs are familiar companions in lunchboxes and congee meals.','じっくり煮込んだ卵は、お弁当やお粥の食卓でおなじみの一品です。','천천히 조린 달걀은 도시락과 죽 식탁에서 친숙한 반찬입니다.'],
+['滷肉的香氣，常讓人想起家中那鍋慢慢燉煮、等待全家開飯的料理。','The aroma of braised pork recalls a pot simmering while the family gathers for dinner.','豚肉の煮込みの香りは、家族の食事を待つ台所の鍋を思わせます。','돼지고기 조림의 향은 가족의 식사를 기다리며 끓이던 냄비를 떠올리게 합니다.'],
+['一支滷棒腿，是餐桌上帶著滿足感的家常滋味，也讓簡單的一餐多了一份豐盛。','A braised drumstick brings a satisfying touch to an otherwise simple meal.','鶏の煮込みは、素朴な食卓に満足感を添える家庭の味です。','닭다리 조림은 소박한 식탁을 한층 풍성하게 만드는 집밥입니다.'],
+['香腸的鹹甜，串起市場、街邊小吃與家中餐桌的日常記憶。','Sweet-savory sausage connects memories of markets, street food and family tables.','台湾ソーセージの甘辛さは、市場や屋台、家庭の食卓を思い出させます。','대만 소시지의 달콤짭짤한 맛은 시장과 길거리 음식, 집밥의 기억을 잇습니다.'],
+['豆腐吸收滷汁後的滋味，是平凡食材經過時間慢慢變得有味道的例子。','Tofu soaking up braising flavors shows how time transforms a humble ingredient.','煮汁を吸った豆腐は、時間が素朴な食材を豊かな味に変える一品です。','양념을 머금은 두부는 시간이 소박한 재료를 깊은 맛으로 바꾸는 음식입니다.'],
+['曬乾保存的竹筍，讓季節的滋味延續到日後的餐桌。','Dried bamboo shoots carry the flavor of one season into meals to come.','干したたけのこは、季節の味を後の食卓へとつなぎます。','말린 죽순은 계절의 맛을 훗날의 식탁까지 이어 줍니다.'],
+['一小碟豆棗的鹹甜，便能陪著一碗清粥，是傳統小菜的樸實魅力。','A small serving of sweet-savory bean curd makes a humble bowl of congee complete.','甘辛い豆棗を少し添えるだけで、お粥の味わいが広がります。','달콤짭짤한 두부 반찬 조금이면 소박한 죽 한 그릇이 완성됩니다.'],
+['一小塊豆腐乳，就能為清粥添上濃郁滋味，也承載著發酵保存的生活智慧。','A little fermented tofu enriches congee and carries the wisdom of traditional fermentation.','少しの腐乳がお粥に深い味を添え、発酵保存の知恵を伝えます。','발효 두부 조금은 죽에 깊은 맛을 더하고 전통 발효의 지혜를 전합니다.']
+];
+riskNames[0][2]='含麩質之穀物';

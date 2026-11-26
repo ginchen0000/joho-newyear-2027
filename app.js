@@ -6,7 +6,7 @@ const $ = id => document.getElementById(id);
 const idx = () => langs.indexOf(lang);
 const t = key => translations[idx()][keys.indexOf(key)] ?? dict[lang][key] ?? '';
 const stage = document.querySelector('.stage');
-const dietText = i => dietNames[idx()][['vegan','allium','egg','meat','mixed'].indexOf(dietCodes[i])] + tentativeSuffix[idx()];
+const dietText = i => dietNames[idx()][['vegan','allium','egg','meat','mixed'].indexOf(dietCodes[i])];
 const riskText = r => riskNames[idx()][['egg','soy','wheat','unknown','none'].indexOf(r)];
 function tag(text) {
     const span = document.createElement('span');
@@ -17,7 +17,7 @@ function tag(text) {
 function renderScene(animate = false) {
     const n = idx();
     const lines = scenes[n][scene].split('\n');
-    $('sceneArt').src = `assets/story-${scene + 1}.webp`;
+    $('sceneArt').src = `assets/story-${scene + 1}.webp?v=7`;
     $('sceneCaption').replaceChildren(...lines.map(line => {
         const span = document.createElement('span');
         span.className = 'caption-line';
@@ -41,9 +41,9 @@ function renderScene(animate = false) {
         void stage.offsetWidth;
         stage.classList.add('play');
         started = performance.now();
-        duration = 3650;
+        duration = 1350;
     } else { duration = 0; }
-    if (scene < 7) { const next = new Image(); next.src = `assets/story-${scene + 2}.webp`; }
+    if (scene < 7) { const next = new Image(); next.src = `assets/story-${scene + 2}.webp?v=7`; }
 }
 function advance() {
     if (duration && performance.now() - started < duration) {
@@ -72,7 +72,7 @@ function renderMenu() {
         dishes.forEach((d,i) => {
             if (d.cat !== cat) return;
             const b = document.createElement('button'); b.className = 'food';
-            const img = document.createElement('img'); img.src = `assets/food-${i}.webp`; img.alt = ''; img.loading = 'lazy';
+            const img = document.createElement('img'); img.src = `assets/food-${i}.webp?v=7`; img.alt = ''; img.loading = 'lazy';
             const name = document.createElement('strong'); name.textContent = d.names[idx()];
             b.append(img,name,tag(dietText(i))); b.onclick = () => openFood(i,b); grid.append(b);
         });
@@ -87,10 +87,10 @@ function render() {
 }
 function openFood(i,b) {
     trigger = b; const d = dishes[i];
-    $('dishTitle').textContent = d.names[idx()]; $('dishArt').src = `assets/food-${i}.webp`;
-    $('dishTags').replaceChildren(tag(dietText(i)), ...(riskCodes[i].length ? riskCodes[i] : ['none']).map(r => tag(riskText(r))));
+    $('dishTitle').textContent = d.names[idx()]; $('dishArt').src = `assets/food-${i}.webp?v=7`;
+    $('dishTags').replaceChildren(tag(dietText(i)), ...riskCodes[i].map(r => tag(riskText(r))));
     $('dishDesc').textContent = d.desc[idx()];
-    $('dishMemory').textContent = ['這是台灣家常餐桌與清粥小菜中熟悉的一味。','A familiar part of Taiwan’s everyday table and late-night congee meals.','台湾の家庭や夜のお粥の食卓で親しまれる味です。','대만의 가정식과 늦은 밤 죽 식탁에서 친숙한 맛입니다.'][idx()];
+    $('dishMemory').textContent = memories[i][idx()];
     $('detail').showModal(); document.body.classList.add('modal-open'); $('detail').scrollTop = 0; $('close').focus();
 }
 $('detail').addEventListener('close', () => { document.body.classList.remove('modal-open'); trigger?.focus({preventScroll:true}); });
@@ -107,3 +107,11 @@ function route() {
 window.addEventListener('hashchange',route);
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { const y = scrollY; lang = b.dataset.lang; try { localStorage.setItem('joho-lang',lang); } catch {} render(); window.scrollTo(0,y); });
 render(); route();
+// 導覽列實際高度決定滿版圖片可用空間。
+const header = document.querySelector('header');
+function syncHeaderHeight() {
+    document.documentElement.style.setProperty('--nav-height', `${header.offsetHeight}px`);
+}
+syncHeaderHeight();
+if ('ResizeObserver' in window) new ResizeObserver(syncHeaderHeight).observe(header);
+window.addEventListener('resize', syncHeaderHeight);
