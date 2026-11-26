@@ -17,7 +17,7 @@ function tag(text) {
 function renderScene(animate = false) {
     const n = idx();
     const lines = scenes[n][scene].split('\n');
-    $('sceneArt').src = `assets/story-${scene + 1}.webp?v=7`;
+    $('sceneArt').src = `assets/story-${scene + 1}.webp?v=7.2`;
     $('sceneCaption').replaceChildren(...lines.map(line => {
         const span = document.createElement('span');
         span.className = 'caption-line';
@@ -43,7 +43,7 @@ function renderScene(animate = false) {
         started = performance.now();
         duration = 1350;
     } else { duration = 0; }
-    if (scene < 7) { const next = new Image(); next.src = `assets/story-${scene + 2}.webp?v=7`; }
+    if (scene < 7) { const next = new Image(); next.src = `assets/story-${scene + 2}.webp?v=7.2`; }
 }
 function advance() {
     if (duration && performance.now() - started < duration) {
@@ -72,7 +72,7 @@ function renderMenu() {
         dishes.forEach((d,i) => {
             if (d.cat !== cat) return;
             const b = document.createElement('button'); b.className = 'food';
-            const img = document.createElement('img'); img.src = `assets/food-${i}.webp?v=7`; img.alt = ''; img.loading = 'lazy';
+            const img = document.createElement('img'); img.src = `assets/food-${i}.webp?v=7.2`; img.alt = ''; img.loading = 'lazy';
             const name = document.createElement('strong'); name.textContent = d.names[idx()];
             b.append(img,name,tag(dietText(i))); b.onclick = () => openFood(i,b); grid.append(b);
         });
@@ -87,7 +87,7 @@ function render() {
 }
 function openFood(i,b) {
     trigger = b; const d = dishes[i];
-    $('dishTitle').textContent = d.names[idx()]; $('dishArt').src = `assets/food-${i}.webp?v=7`;
+    $('dishTitle').textContent = d.names[idx()]; $('dishArt').src = `assets/food-${i}.webp?v=7.2`;
     $('dishTags').replaceChildren(tag(dietText(i)), ...riskCodes[i].map(r => tag(riskText(r))));
     $('dishDesc').textContent = d.desc[idx()];
     $('dishMemory').textContent = memories[i][idx()];
