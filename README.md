@@ -1,9 +1,13 @@
-# JÒHŌ HOTEL V5
+# JÒHŌ HOTEL 2026–2027 · V6
 
-將 ZIP 解壓縮後，將內容上傳至既有 GitHub Pages repository 的發布根目錄，保留 .nojekyll。無需建置。入口 index.html；style.css 控制版面；data.js 管理四語文案、菜色與參考標籤；app.js 管理路由、故事、篩選與彈窗。
+將本目錄全部檔案（含 assets 與 .nojekyll）覆蓋至原 GitHub Pages 發布目錄，commit 後等待部署。無需建置或後端。保留原 Repository 與 Pages 路徑即可沿用 QR Code。
 
-故事八幕依現有插畫重新編排及撰寫短字幕。首頁桌機沿用橫式圖，手機採新版直式圖。圖片為 WebP。Google Fonts 為唯一允許的外部字體來源；離線時使用系統字體。CSP 以 meta 設定，非伺服器安全標頭；GitHub 帳號應開啟雙重驗證。
+- index.html：入口與頁面結構
+- style.css：版面、動畫、響應式樣式
+- app.js：路由、語言、故事操作、料理對話框
+- data.js：四語系內容及暫定飲食分類
+- assets：13 道料理、8 幕分鏡、兩張首頁圖
 
-葷素與過敏原沿用 V4 一般食譜參考資料，並修正豆棗為麵筋製品。未經廚房確認，不可視為安全供餐保證。正式發布前請核對實際配方、供應商及交叉接觸。
-
-本次未驗證正式 GitHub Pages 環境及實機瀏覽器。
+飲食分類依提供表格，非廚房確認結果；空白過敏原不代表安全。正式發布前確認實際配方及交叉接觸。未確認分類不提供安全篩選。
+CSP 限制腳本與連線，Google Fonts 為唯一外部資源；不代表網站免於所有攻擊。GitHub 帳號應啟用雙重驗證。
+測試：Node 語法檢查及素材對應檢查完成；容器 Chromium 政策阻擋 localhost 與 file URL，未完成瀏覽器操作驗證。正式部署及 iOS Safari 需另測。

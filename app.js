@@ -1,33 +1,109 @@
 'use strict';
-const langs=['zh','en','ja','ko'];
-let lang='zh',filter='all',trigger=null,scene=0;
-try{if(langs.includes(localStorage.getItem('joho-lang')))lang=localStorage.getItem('joho-lang')}catch{}
-const $=id=>document.getElementById(id);
-const idx=()=>langs.indexOf(lang);
-const t=key=>translations[idx()][keys.indexOf(key)]??dict[lang][key]??'';
-const dietText=type=>labels[idx()][['all','veg','egg','meat'].indexOf(type)];
-function renderScene(){
- const n=idx();
- $('sceneArt').src=`assets/story-${scene+1}.webp`;
- $('sceneCaption').textContent=scenes[n][scene];
- $('sceneCount').textContent=`${scene+1} / 8`;
- $('sceneHint').textContent=scene===7?t('taste'):['點擊繼續','Tap to continue','タップして続ける','탭하여 계속'][n];
- $('skipScene').textContent=['跳至料理','Skip to menu','料理へ','메뉴로'][n];
- $('prevScene').disabled=scene===0;
- $('prevScene').setAttribute('aria-label',['上一幕','Previous scene','前の場面','이전 장면'][n]);
- $('nextScene').setAttribute('aria-label',['下一幕','Next scene','次の場面','다음 장면'][n]);
+const langs = ['zh', 'en', 'ja', 'ko'];
+let lang = 'zh', scene = 0, trigger = null, started = 0, duration = 0, touchX = null, suppressClick = false;
+try { if (langs.includes(localStorage.getItem('joho-lang'))) lang = localStorage.getItem('joho-lang'); } catch {}
+const $ = id => document.getElementById(id);
+const idx = () => langs.indexOf(lang);
+const t = key => translations[idx()][keys.indexOf(key)] ?? dict[lang][key] ?? '';
+const stage = document.querySelector('.stage');
+const dietText = i => dietNames[idx()][['vegan','allium','egg','meat','mixed'].indexOf(dietCodes[i])] + tentativeSuffix[idx()];
+const riskText = r => riskNames[idx()][['egg','soy','wheat','unknown','none'].indexOf(r)];
+function tag(text) {
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = text;
+    return span;
 }
-function advance(){if(scene===7){location.hash='menu';return;}scene++;renderScene();}
-$('sceneTap').onclick=$('nextScene').onclick=advance;
-$('prevScene').onclick=()=>{if(scene>0){scene--;renderScene();}};
-function renderMenu(){
- $('filters').replaceChildren();
- for(const type of ['all','veg','egg','meat']){const b=document.createElement('button');b.textContent=dietText(type);b.setAttribute('aria-pressed',String(filter===type));b.onclick=()=>{filter=type;renderMenu();$('filters').children[['all','veg','egg','meat'].indexOf(type)].focus()};$('filters').append(b)}
- $('foodgrid').innerHTML='';
- for(let cat=1;cat<=5;cat++){const items=dishes.map((d,i)=>({d,i})).filter(({d,i})=>d.cat===cat&&(filter==='all'||dietary[i]===filter));if(!items.length)continue;const section=document.createElement('section');section.className='group';section.innerHTML=`<h2>${dict[lang].categories[cat]}</h2><div class="grid"></div>`;for(const {d,i} of items){const b=document.createElement('button');b.className='food';b.innerHTML=`<img src="assets/food-${i}.webp" alt="" loading="lazy"><strong>${d.names[idx()]}</strong><span class="tag">${dietText(dietary[i])}</span>`;b.onclick=()=>openFood(i,b);section.lastElementChild.append(b)}$('foodgrid').append(section)}
+function renderScene(animate = false) {
+    const n = idx();
+    const lines = scenes[n][scene].split('\n');
+    $('sceneArt').src = `assets/story-${scene + 1}.webp`;
+    $('sceneCaption').replaceChildren(...lines.map(line => {
+        const span = document.createElement('span');
+        span.className = 'caption-line';
+        span.textContent = line;
+        return span;
+    }));
+    $('sceneHint').textContent = scene === 7 ? t('taste') : ['點擊下一頁','Tap for next scene','タップして次へ','탭하여 다음 장면'][n];
+    $('skipScene').textContent = ['跳過劇情 ›','Skip story ›','物語をスキップ ›','이야기 건너뛰기 ›'][n];
+    $('sceneDots').replaceChildren();
+    for (let i = 0; i < 8; i++) {
+        const b = document.createElement('button');
+        b.className = 'dot';
+        b.type = 'button';
+        b.setAttribute('aria-label', `${i + 1} / 8`);
+        b.setAttribute('aria-current', String(i === scene));
+        b.onclick = () => { scene = i; renderScene(true); $('sceneDots').children[i].focus(); };
+        $('sceneDots').append(b);
+    }
+    stage.classList.remove('play','complete');
+    if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        void stage.offsetWidth;
+        stage.classList.add('play');
+        started = performance.now();
+        duration = 3650;
+    } else { duration = 0; }
+    if (scene < 7) { const next = new Image(); next.src = `assets/story-${scene + 2}.webp`; }
 }
-function render(){document.documentElement.lang=({zh:'zh-Hant',en:'en',ja:'ja',ko:'ko'})[lang];document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)));renderScene();renderMenu()}
-function openFood(i,b){trigger=b;const d=dishes[i];$('dishTitle').textContent=d.names[idx()];$('dishArt').src=`assets/food-${i}.webp`;$('dishTags').textContent=dietText(dietary[i]);$('dishDesc').textContent=d.desc[idx()];$('dishMemory').textContent=[ '這是台灣家常餐桌與清粥小菜中熟悉的一味。','A familiar part of Taiwan’s everyday table and late-night congee meals.','台湾の家庭や夜のお粥の食卓で親しまれる味です。','대만의 가정식과 늦은 밤 죽 식탁에서 친숙한 맛입니다.'][idx()];$('dishAllergens').textContent=risks[i].map(r=>labels[idx()][4+['egg','soy','wheat','shell','milk','sulfite','sesame'].indexOf(r)]).join(' · ')||labels[idx()][11];$('detail').showModal();document.body.classList.add('modal-open');$('close').focus()}
-$('detail').addEventListener('close',()=>{document.body.classList.remove('modal-open');trigger?.focus()});$('close').onclick=$('done').onclick=()=>$('detail').close();$('detail').addEventListener('click',e=>{if(e.target===$('detail')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}});
-function route(){const id=location.hash.slice(1);const page=['home','story','menu','wish'].includes(id)?id:'home';if($('detail').open)$('detail').close();document.querySelectorAll('.page').forEach(e=>e.hidden=e.id!==page);window.scrollTo(0,0)}
-window.addEventListener('hashchange',route);document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{const y=scrollY;lang=b.dataset.lang;try{localStorage.setItem('joho-lang',lang)}catch{}render();window.scrollTo(0,y)});render();route();
+function advance() {
+    if (duration && performance.now() - started < duration) {
+        stage.classList.add('complete'); duration = 0; return;
+    }
+    if (scene === 7) { location.hash = 'menu'; return; }
+    scene++; renderScene(true);
+}
+$('sceneTap').onclick = () => { if (!suppressClick) advance(); };
+stage.addEventListener('touchstart', e => { touchX = e.changedTouches[0].clientX; suppressClick = false; }, {passive:true});
+stage.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX; touchX = null;
+    if (Math.abs(dx) < 65) return;
+    suppressClick = true;
+    if (dx > 0 && scene > 0) { scene--; renderScene(true); }
+    else if (dx < 0) { duration = 0; advance(); }
+    setTimeout(() => { suppressClick = false; }, 350);
+}, {passive:true});
+function renderMenu() {
+    $('foodgrid').replaceChildren();
+    for (let cat = 1; cat <= 5; cat++) {
+        const section = document.createElement('section'); section.className = 'group';
+        const h = document.createElement('h2'); h.textContent = dict[lang].categories[cat];
+        const grid = document.createElement('div'); grid.className = 'grid';
+        dishes.forEach((d,i) => {
+            if (d.cat !== cat) return;
+            const b = document.createElement('button'); b.className = 'food';
+            const img = document.createElement('img'); img.src = `assets/food-${i}.webp`; img.alt = ''; img.loading = 'lazy';
+            const name = document.createElement('strong'); name.textContent = d.names[idx()];
+            b.append(img,name,tag(dietText(i))); b.onclick = () => openFood(i,b); grid.append(b);
+        });
+        section.append(h,grid); $('foodgrid').append(section);
+    }
+}
+function render() {
+    document.documentElement.lang = ({zh:'zh-Hant',en:'en',ja:'ja',ko:'ko'})[lang];
+    document.querySelectorAll('[data-t]').forEach(e => e.textContent = t(e.dataset.t));
+    document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed',String(b.dataset.lang === lang)));
+    renderScene(); renderMenu();
+}
+function openFood(i,b) {
+    trigger = b; const d = dishes[i];
+    $('dishTitle').textContent = d.names[idx()]; $('dishArt').src = `assets/food-${i}.webp`;
+    $('dishTags').replaceChildren(tag(dietText(i)), ...(riskCodes[i].length ? riskCodes[i] : ['none']).map(r => tag(riskText(r))));
+    $('dishDesc').textContent = d.desc[idx()];
+    $('dishMemory').textContent = ['這是台灣家常餐桌與清粥小菜中熟悉的一味。','A familiar part of Taiwan’s everyday table and late-night congee meals.','台湾の家庭や夜のお粥の食卓で親しまれる味です。','대만의 가정식과 늦은 밤 죽 식탁에서 친숙한 맛입니다.'][idx()];
+    $('detail').showModal(); document.body.classList.add('modal-open'); $('detail').scrollTop = 0; $('close').focus();
+}
+$('detail').addEventListener('close', () => { document.body.classList.remove('modal-open'); trigger?.focus({preventScroll:true}); });
+$('close').onclick = () => $('detail').close();
+$('detail').addEventListener('click', e => { if (e.target === $('detail')) { const r = e.target.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) e.target.close(); } });
+function route() {
+    const id = location.hash.slice(1); const page = ['home','story','menu','wish'].includes(id) ? id : 'home';
+    if ($('detail').open) $('detail').close();
+    document.querySelectorAll('.page').forEach(e => e.hidden = e.id !== page);
+    if (page === 'story') renderScene(true);
+    if (page === 'home') { const hero = $('home'); hero.classList.remove('hero'); void hero.offsetWidth; hero.classList.add('hero'); }
+    window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { const y = scrollY; lang = b.dataset.lang; try { localStorage.setItem('joho-lang',lang); } catch {} render(); window.scrollTo(0,y); });
+render(); route();
